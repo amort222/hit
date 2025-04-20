@@ -1,0 +1,199 @@
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Amorti Market</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #222;
+      color: #fff;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header img {
+      height: 40px;
+    }
+    header input {
+      padding: 5px;
+      font-size: 16px;
+      width: 50%;
+    }
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 20px;
+      gap: 20px;
+      justify-content: center;
+    }
+    .product {
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 10px;
+      width: 200px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .product img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .details, .cart {
+      padding: 20px;
+      display: none;
+    }
+    .details img {
+      width: 100%;
+      max-width: 400px;
+      height: auto;
+      border-radius: 8px;
+    }
+    button {
+      background-color: #28a745;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      margin-top: 10px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    #cart-btn {
+      background-color: #f39c12;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="https://amort222.github.io/alisveris-sitem/logo.jpg" alt="logo" />
+    <input type="text" id="search" placeholder="Ürün Ara..." oninput="searchProduct()" />
+    <button id="cart-btn" onclick="showCart()">Sepet (<span id="cart-count">0</span>)</button>
+  </header>
+
+  <div class="products" id="product-list"></div>
+
+  <div class="details" id="product-details"></div>
+
+  <div class="cart" id="cart-view">
+    <h2>Sepetteki Ürünler</h2>
+    <ul id="cart-items"></ul>
+    <button onclick="closeCart()">Kapat</button>
+  </div>
+
+  <script>
+    const products = [
+      {
+        name: "Kürt Ürünü",
+        img: "https://amort222.github.io/alisveris-sitem/kürt.jpg",
+        desc: "Bu ürün özgün ve anlamlı bir üründür."
+      },
+      {
+        name: "Filtreli Ürün",
+        img: "https://amort222.github.io/alisveris-sitem/filtreli.jpg",
+        desc: "Filtreli efektle tasarlanmış şık bir ürün."
+      },
+      {
+        name: "Bijibebe",
+        img: "https://amort222.github.io/alisveris-sitem/bijibebe.jpg",
+        desc: "Sevimli ve özel bir hediyelik ürün."
+      }
+    ];
+
+    let cart = [];
+
+    const productList = document.getElementById("product-list");
+    const details = document.getElementById("product-details");
+    const cartView = document.getElementById("cart-view");
+    const cartItems = document.getElementById("cart-items");
+    const cartCount = document.getElementById("cart-count");
+
+    function displayProducts() {
+      productList.innerHTML = "";
+      products.forEach((p, index) => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" />
+          <h3>${p.name}</h3>
+        `;
+        div.onclick = () => showDetails(index);
+        productList.appendChild(div);
+      });
+    }
+
+    function showDetails(index) {
+      const p = products[index];
+      details.style.display = "block";
+      productList.style.display = "none";
+      cartView.style.display = "none";
+      details.innerHTML = `
+        <h2>${p.name}</h2>
+        <img src="${p.img}" />
+        <p>${p.desc}</p>
+        <button onclick="addToCart(${index})">Sepete Ekle</button>
+        <button onclick="closeDetails()">Geri Dön</button>
+      `;
+    }
+
+    function closeDetails() {
+      details.style.display = "none";
+      productList.style.display = "flex";
+    }
+
+    function addToCart(index) {
+      cart.push(products[index]);
+      updateCartCount();
+      alert("Ürün sepete eklendi!");
+    }
+
+    function updateCartCount() {
+      cartCount.textContent = cart.length;
+    }
+
+    function showCart() {
+      productList.style.display = "none";
+      details.style.display = "none";
+      cartView.style.display = "block";
+
+      cartItems.innerHTML = "";
+      cart.forEach((item, i) => {
+        const li = document.createElement("li");
+        li.textContent = item.name;
+        cartItems.appendChild(li);
+      });
+    }
+
+    function closeCart() {
+      cartView.style.display = "none";
+      productList.style.display = "flex";
+    }
+
+    function searchProduct() {
+      const keyword = document.getElementById("search").value.toLowerCase();
+      const filtered = products.filter(p => p.name.toLowerCase().includes(keyword));
+      productList.innerHTML = "";
+      filtered.forEach((p, index) => {
+        const div = document.createElement("div");
+        div.className = "product";
+        div.innerHTML = `
+          <img src="${p.img}" alt="${p.name}" />
+          <h3>${p.name}</h3>
+        `;
+        div.onclick = () => showDetails(products.indexOf(p));
+        productList.appendChild(div);
+      });
+    }
+
+    displayProducts();
+  </script>
+</body>
+</html>
